@@ -1,0 +1,5 @@
+application\AverageSensor.class
+application\StandardSensor.class
+application\Program.class
+application\Sensor.class
+application\TemperatureSensor.class
