@@ -17,54 +17,38 @@
  */
 package application;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  * @author Dantes
  */
-public class Party {
-    
-    private String name;
-    private ArrayList<String> values;
+public class InterestCalculations {
 
-    public Party(String name, ArrayList<String> values) {
-        this.name = name;
 
-        this.values = values;
+    public Map<Integer, Double> calculateSavings(int years, double savings) {
+        Map<Integer, Double> savingsMap = new HashMap<>();
+        double current = 0;
+
+        for (int i = 0; i < years; i++) {
+            savingsMap.put(i, current);
+            current += savings * 12;
+        }
+
+        return savingsMap;
     }
 
-    public String getName() {
-        return name;
+    public Map<Integer, Double> calculateInterest(int years, double savings, double rate) {
+        Map<Integer, Double> interestMap = new HashMap<>();
+        double current = 0;
+
+        for (int i = 0; i < years; i++) {
+            interestMap.put(i, current);
+            current += savings * 12;
+        }
+
+        return interestMap;
     }
-
-
-
-    public String getValue(int index) {
-        return values.get(index);
-    }
-    
-    
-    
-
-    @Override
-    public String toString() {
-        return "Party{" + "name=" + name + ", values=" + values + '}';
-    }
-    
-    
-    
-    
-
-    
-    
-
-
-    
-    
-    
-    
-    
-    
     
 }

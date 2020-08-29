@@ -1,5 +1,4 @@
 package application;
-//SavingsCalculatorApplication
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
@@ -11,106 +10,111 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class SavingsCalculatorApplication extends Application {
 
     @Override
-    public void start(Stage window) {
-        BorderPane borderLayout = new BorderPane();
+    public void start(Stage stage) {
 
-        NumberAxis yAxis = new NumberAxis(0, 110, 10);
+        BorderPane layout = new BorderPane();
 
-        NumberAxis xAxis = new NumberAxis(0, 30, 1);
-        //
-        Label monthSliderText = new Label("25");
-        monthSliderText.setFont(new Font("sans-serif", 20));
+        BorderPane savingsPane = new BorderPane();
 
-        Label interestSliderText = new Label("0");
-        interestSliderText.setFont(new Font("sans-serif", 20));
-
-        // set the titles for the axes
-        xAxis.setLabel("Years");
-        yAxis.setLabel("Amount");
-
-        // create the line chart. The values of the chart are given as numbers
-        // and it uses the axes we created earlier
-        
-        VBox topVBox = new VBox();
-        topVBox.setPadding(new Insets(15, 15, 15, 15));
-        BorderPane monthlyBPane = new BorderPane();
-        BorderPane interestBPane = new BorderPane();
-
-        //LAbels~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        Label monthLabel = new Label("Monthly savings");
-
-        Label interestLabel = new Label("Yearly interest rate");
-
-        monthLabel.setFont(new Font("Arial", 20));
-        interestLabel.setFont(new Font("Arial", 20));
-        interestBPane.setLeft(interestLabel);
-        monthlyBPane.setLeft(monthLabel);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        //Monthly Saving slider~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         Slider savingsSlider = new Slider(25, 250, 25);
-        monthlyBPane.setCenter(savingsSlider);
-        monthlyBPane.setRight(monthSliderText);
-        savingsSlider.setMinorTickCount(5);
-        savingsSlider.setMajorTickUnit(25);
+        savingsSlider.setSnapToTicks(true);
+        savingsSlider.setBlockIncrement(500);
         savingsSlider.setShowTickMarks(true);
         savingsSlider.setShowTickLabels(true);
-        LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
-        lineChart.setTitle("University of Helsinki, Shanghai ranking");
-        
-        XYChart.Series lineOneChart = new XYChart.Series();
-        
-        savingsSlider.valueProperty().addListener((observable, oldvalue, newvalue)
-                -> {
-            int i = newvalue.intValue();
-            monthSliderText.setText(Integer.toString(i));
 
-            
-            
+        Label savingsInfo = new Label();
+        savingsInfo.setText("" + savingsSlider.getValue());
+
+        savingsPane.setLeft(new Label("Monthly savings"));
+        savingsPane.setCenter(savingsSlider);
+        savingsPane.setRight(savingsInfo);
+        savingsPane.setPadding(new Insets(10));
 
 
-        });
+        BorderPane interestPane = new BorderPane();
 
-//~~~~~~~~~~~~~~~intesrt slider~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         Slider interestSlider = new Slider(0, 10, 0);
-        interestBPane.setCenter(interestSlider);
-        interestBPane.setRight(interestSliderText);
-        interestSlider.setMinorTickCount(0);
-        interestSlider.setMajorTickUnit(2);
+        interestSlider.setMinorTickCount(10);
         interestSlider.setShowTickMarks(true);
         interestSlider.setShowTickLabels(true);
-        interestSlider.valueProperty().addListener((observable, oldvalue, newvalue)
-                -> {
-            int i = newvalue.intValue();
-            interestSliderText.setText(Integer.toString(i));
+
+        Label interestInfo = new Label();
+        interestInfo.setText("" + interestSlider.getValue());
+
+        interestPane.setLeft(new Label("Yearly interest rate"));
+        interestPane.setCenter(interestSlider);
+        interestPane.setRight(interestInfo);
+        interestPane.setPadding(new Insets(10));
+
+        VBox sliderVBox = new VBox();
+        sliderVBox.getChildren().addAll(savingsPane, interestPane);
+
+        layout.setTop(sliderVBox);
+
+        NumberAxis xAxis = new NumberAxis(0, 30, 1);
+        NumberAxis yAxis = new NumberAxis();
+
+        LineChart<Number, Number> lineChart = new LineChart(xAxis, yAxis);
+        lineChart.setAnimated(false);
+        lineChart.setLegendVisible(false);
+        lineChart.setTitle("Savings calulator");
+
+        layout.setCenter(lineChart);
+
+        XYChart.Series savingsSeries = new XYChart.Series();
+        XYChart.Series savingsWithInterestSeries = new XYChart.Series();
+
+        lineChart.getData().add(savingsSeries);
+        lineChart.getData().add(savingsWithInterestSeries);
+
+
+        savingsSlider.valueProperty().addListener((observable, oldvalue, newvalue) -> {
+            int savings = newvalue.intValue();
+            savingsInfo.setText("" + savings);
+
+            updateSavings(savingsSlider.getValue(), interestSlider.getValue(), savingsSeries, savingsWithInterestSeries);
         });
 
-        topVBox.getChildren().add(monthlyBPane);
-        topVBox.getChildren().add(interestBPane);
-        //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        interestSlider.valueProperty().addListener((observable, oldvalue, newvalue) -> {
+            interestInfo.setText("" + newvalue);
 
-        borderLayout.setTop(topVBox);
+            updateSavings(savingsSlider.getValue(), interestSlider.getValue(), savingsSeries, savingsWithInterestSeries);
+        });
 
-        borderLayout.setCenter(lineChart);
+        Scene view = new Scene(layout, 640, 480);
 
-        Scene view = new Scene(borderLayout, 700, 800);
-
-        window.setScene(view);
-        window.show();
-
+        stage.setScene(view);
+        stage.show();
     }
-    
-    
-    
 
     public static void main(String[] args) {
         launch(SavingsCalculatorApplication.class);
+        System.out.println("Hello world!");
     }
+
+
+    private void updateSavings(double savings, double interest,  XYChart.Series savingsSeries, XYChart.Series savingsWithInterestSeries) {
+        savingsSeries.getData().clear();
+        savingsWithInterestSeries.getData().clear();
+
+        savingsSeries.getData().add(new XYChart.Data(0, 0));
+        savingsWithInterestSeries.getData().add(new XYChart.Data(0, 0));
+
+        double savs = 0.0;
+        double intrs = 0.0;
+
+        for (int i = 0; i < 30; i++) {
+            savingsSeries.getData().add(new XYChart.Data(i, savs));
+            savingsWithInterestSeries.getData().add(new XYChart.Data(i, intrs));
+
+            savs += savings * 12;
+            intrs = (intrs + savings * 12) * (1.0 + interest / 100.0);
+        }
+    };
 
 }

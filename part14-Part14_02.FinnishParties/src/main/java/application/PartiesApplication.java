@@ -1,159 +1,113 @@
-//PartiesApplication 
+
+/*
+ * Copyright (C) 2020 Dantes
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 package application;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
 import javafx.application.Application;
-import static javafx.application.Application.launch;
 import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.stage.Stage;
 
+
 public class PartiesApplication extends Application {
+    private HashMap<String, HashMap<Integer, Double>> values;
 
-    static Parties partyList = new Parties();
-    static ArrayList<Integer> years = new ArrayList<>();
-//year
-    static int year1;
-    static int year2;
-    static int year3;
-    static int year4;
-    static int year5;
-    static int year6;
-    static int year7;
-    static int year8;
-    static int year9;
-    static int year10;
-    static int year11;
+    public PartiesApplication() {
+        this.values = readVoterFile("partiesdata.tsv");
+    }
 
+    @Override
     public void start(Stage stage) {
         // create the x and y axes that the chart is going to use
-
+        NumberAxis xAxis = new NumberAxis(1968, 2008, 4);
         NumberAxis yAxis = new NumberAxis(0, 30, 5);
 
-        NumberAxis xAxis = new NumberAxis(1968, 2008, 4);
-
-        // set the titles for the axes
-//        xAxis.setLabel("Year");
-//        yAxis.setLabel("Ranking");
         // create the line chart. The values of the chart are given as numbers
         // and it uses the axes we created earlier
         LineChart<Number, Number> lineChart = new LineChart<>(xAxis, yAxis);
-        lineChart.setTitle("Realative support of the parties");
+        lineChart.setTitle("Relative support of the parties");
 
-        // create the data set that is going to be added to the line chart
-        //XYChart.Series UoHData = new XYChart.Series();
-        // UoHData.setName("Year");
-        // and single points into the data set
-       // XYChart.Series data1 = new XYChart.Series();
-
-        //data1.getData().add(new XYChart.Data(2000, 20.5));
-
-        for (int i = 0; i < partyList.getSize(); i++) {
-
-            //String dataName = partyList.getParty(i).getName();
+        // go through the parties and add them to the chart
+        values.keySet().stream().forEach(party -> {
+            // a different data set for each party
             XYChart.Series data = new XYChart.Series();
+            data.setName(party);
 
-            data.setName(partyList.getParty(i).getName());
+            // add the party's support numbers to the data set
+            values.get(party).entrySet().stream().forEach(pair -> {
+                data.getData().add(new XYChart.Data(pair.getKey(), pair.getValue()));
+            });
 
-            //lineChart.getData().add(data1);
-            for (int j = 0; j < years.size(); j++) {
-                if (!partyList.getParty(i).getValue(j).trim().equals("-")) {
-
-                    //System.out.println(years.get(j) + " : " + Double.valueOf(partyList.getParty(i).getValue(j)) );
-                    data.getData().add(new XYChart.Data(years.get(j), Double.valueOf(partyList.getParty(i).getValue(j))));
-
-                    System.out.println(years.get(j) + " : " + Double.valueOf(partyList.getParty(i).getValue(j)));
-
-                }
-
-            }
-
+            // and add the data to the chart
             lineChart.getData().add(data);
+        });
 
-        }
-
-        // add the data set to the line chart
-        // lineChart.getData().add(UoHData);
-        // create another data set that's going to be added to the chart
         // display the line chart
-        Scene view = new Scene(lineChart, 640, 480);
-
-        // System.out.println(lineChart.getData().size()) ;
+        Scene view = new Scene(lineChart, 400, 300);
         stage.setScene(view);
         stage.show();
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
+        launch(PartiesApplication.class);
+        System.out.println("Hello world!");
+    }
 
-        try (Scanner fileScanner = new Scanner(Paths.get("partiesdata.tsv"))) {
+    private HashMap<String, HashMap<Integer, Double>> readVoterFile(String filename) {
+        HashMap<String, HashMap<Integer, Double>> values1 = new HashMap<>();
+        ArrayList<Integer> yearList = new ArrayList<>();
 
-            while (fileScanner.hasNextLine()) {
+        try(Scanner data = new Scanner(Paths.get(filename))) {
+            String row = data.nextLine();
+            String[] stringArr = row.split("\t");
+            for (int i = 1; i < stringArr.length; i++) { // skip first
+                yearList.add(Integer.parseInt(stringArr[i]));
+            }
 
-                String line = fileScanner.nextLine();
-
-                ArrayList<String> values = new ArrayList<>();
-
-                String[] splitString = line.split("\t");
-
-                String partyName = splitString[0];
-
-                if (partyName.equals("Party")) {
-                    year1 = Integer.valueOf(splitString[1]);
-                    year2 = Integer.valueOf(splitString[2]);
-                    year3 = Integer.valueOf(splitString[3]);
-                    year4 = Integer.valueOf(splitString[4]);
-                    year5 = Integer.valueOf(splitString[5]);
-                    year6 = Integer.valueOf(splitString[6]);
-                    year7 = Integer.valueOf(splitString[7]);
-                    year8 = Integer.valueOf(splitString[8]);
-                    year9 = Integer.valueOf(splitString[9]);
-                    year10 = Integer.valueOf(splitString[10]);
-                    year11 = Integer.valueOf(splitString[11]);
-                } else {
-
-                    //System.out.println("Testing");
-                    //values.add(splitString[0]);
-                    values.add(splitString[1]);
-                    values.add(splitString[2]);
-                    values.add(splitString[3]);
-                    values.add(splitString[4]);
-                    values.add(splitString[5]);
-                    values.add(splitString[6]);
-                    values.add(splitString[7]);
-                    values.add(splitString[8]);
-                    values.add(splitString[9]);
-                    values.add(splitString[10]);
-                    values.add(splitString[11]);
-
-                    partyList.addParty(new Party(splitString[0], values));
+            while (data.hasNext()) {
+                String next = data.nextLine();
+                stringArr = next.split("\t");
+                String party = stringArr[0];
+                HashMap<Integer, Double> map = new HashMap<>();
+                for (int i = 1; i < stringArr.length; i++) {
+                    if (!stringArr[i].equals("-")) {
+                        int year = yearList.get(i-1);
+                        String dat = stringArr[i];
+                        double number = Double.parseDouble(dat);
+                        map.put(year, number);
+                    }
 
                 }
-
+                values1.put(party, map);
             }
-            years.add(year1);
-            years.add(year2);
-            years.add(year3);
-            years.add(year4);
-            years.add(year5);
-            years.add(year6);
-            years.add(year7);
-            years.add(year8);
-            years.add(year9);
-            years.add(year10);
-            years.add(year11);
 
-            launch(PartiesApplication.class);
-        } catch (FileNotFoundException e) {
-
-            System.out.println("Error reading file myError123 " + e.getMessage());
+        } catch(IOException e) {
+            System.err.println("Error: " + e.toString());
         }
 
+        return values1;
     }
 
 }

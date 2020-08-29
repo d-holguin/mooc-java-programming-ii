@@ -27,15 +27,7 @@ import java.util.List;
  * @author Dantes
  */
 public class University {
-    
-    
     private String name;
-    
     private List<Student> students;
-    
-    
-  
-    
- 
     
 }
