@@ -150,7 +150,7 @@ public class TicTacToeApplication extends Application {
 
     public static void main(String[] args) {
         launch(TicTacToeApplication.class);
-        System.out.println("Hello world!");
+//         System.out.println("Hello world!");
     }
 
 }
