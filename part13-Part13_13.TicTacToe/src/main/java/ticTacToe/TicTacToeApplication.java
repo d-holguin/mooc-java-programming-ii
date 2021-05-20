@@ -84,7 +84,7 @@ public class TicTacToeApplication extends Application {
     }
 
     private boolean gameScratched() {
-        if (!buttons[0].getText().equals(" ") &&
+        return (!buttons[0].getText().equals(" ") &&
             !buttons[1].getText().equals(" ") &&
             !buttons[2].getText().equals(" ") &&
             !buttons[3].getText().equals(" ") &&
@@ -92,10 +92,7 @@ public class TicTacToeApplication extends Application {
             !buttons[5].getText().equals(" ") &&
             !buttons[6].getText().equals(" ") &&
             !buttons[7].getText().equals(" ") &&
-            !buttons[8].getText().equals(" ")) {
-            return true;
-        }
-        return false;
+            !buttons[8].getText().equals(" "))
     }
 
     private boolean gameWon() {
