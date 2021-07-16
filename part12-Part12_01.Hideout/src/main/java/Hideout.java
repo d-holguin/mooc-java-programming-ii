@@ -24,7 +24,7 @@ import java.util.List;
  * @author Dantes
  * @param <T>
  */
-public abstract class Hideout<T> implements List<T> {
+public class Hideout<T>{
 
     private List<T> hideoutList;
 
