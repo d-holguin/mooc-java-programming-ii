@@ -23,7 +23,7 @@ import java.util.List;
  *
  * @author Dantes
  */
-public abstract class Pipe<T> implements List<T> {
+public class Pipe<T> {
 
     private List<T> listOfPipe;
 
@@ -41,9 +41,9 @@ public abstract class Pipe<T> implements List<T> {
         if (listOfPipe.isEmpty()) {
             return null;
         }
-        T value = listOfPipe.get(listOfPipe.size() - 1);
+        T value = listOfPipe.get(0);
 
-        listOfPipe.remove(listOfPipe.size() - 1);
+        listOfPipe.remove(0);
         return value;
 
     }
