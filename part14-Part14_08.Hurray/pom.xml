@@ -46,6 +46,11 @@
             <version>8u76-b04</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+           <groupId>org.openjfx</groupId>
+           <artifactId>javafx-media</artifactId>
+           <version>11</version>
+        </dependency>
     </dependencies>
    
     <build>
